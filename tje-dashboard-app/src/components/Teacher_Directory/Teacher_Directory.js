@@ -1,17 +1,21 @@
 import { Link } from "react-router-dom";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useState  } from "react";
 import { db } from "../../firebase.js";
-import { getDocs, collection, addDoc } from "firebase/firestore";
+import { getDocs, collection, addDoc, setDoc } from "firebase/firestore";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+
 
 function TEACHER_DIRECTORY() {
   const [teacherList, setTeacherList] = useState([]);
 
   const teacherCollectionRef = collection(db, "Teachers");
-
+  const [prevName, setPrevName]= useState("");
   const [newName, setNewName] = useState("");
   const [editedName, setEditedName] = useState("");
   const [teacherAdded, setTeacherAdded] = useState(false);
@@ -39,6 +43,17 @@ function TEACHER_DIRECTORY() {
       name: newName,
     });
   }
+  async function changeTeacherName(prevName, editedName){
+    let changedTeacher = teacherList.filter((teacher) => (teacher.name === prevName ) )
+    console.log(changedTeacher[0].id);
+    const docRef = await setDoc((db, "Teachers", changedTeacher[0].id),{
+      name: editedName
+    })
+
+  }
+
+  
+
 
   return (
     <div style={{ textAlign: "center" }}>
@@ -75,9 +90,22 @@ function TEACHER_DIRECTORY() {
         >
           Add New Teacher
         </Button>
-        <div>
+        <div style = {{textAlign:"center"}}>
           <h2>Edit Teacher Name</h2>
-          <Select></Select>
+          <Box sx={{ minWidth: 50 , maxWidth:250}}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Name to Change</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value= {prevName}
+                label= "Previous Name"
+                onChange={ (e) =>  setPrevName(e.target.value )   }
+              >
+                {teacherList.map( (teacher) =>     (<MenuItem value={teacher.name}> {teacher.name} </MenuItem>)   ) }
+              </Select>
+            </FormControl>
+          </Box>
 
           <TextField
             value={editedName}
@@ -85,6 +113,9 @@ function TEACHER_DIRECTORY() {
             label="Edited Name"
             variant="outlined"
           />
+          <Button   variant="outlined" onClick={()=> (changeTeacherName(prevName, editedName), setTeacherAdded(!teacherAdded))} >
+            Save Changes
+          </Button>
           <br></br>
         </div>
       </footer>
