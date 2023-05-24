@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { db } from "../../firebase.js";
 import { getDocs, collection, addDoc } from "firebase/firestore";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 
 function TEACHER_DIRECTORY() {
   const [teacherList, setTeacherList] = useState([]);
@@ -11,6 +13,7 @@ function TEACHER_DIRECTORY() {
   const teacherCollectionRef = collection(db, "Teachers");
 
   const [newName, setNewName] = useState("");
+  const [editedName, setEditedName] = useState("");
   const [teacherAdded, setTeacherAdded] = useState(false);
 
   useEffect(() => {
@@ -74,6 +77,15 @@ function TEACHER_DIRECTORY() {
         </Button>
         <div>
           <h2>Edit Teacher Name</h2>
+          <Select></Select>
+
+          <TextField
+            value={editedName}
+            onChange={(e) => setEditedName(e.target.value)}
+            label="Edited Name"
+            variant="outlined"
+          />
+          <br></br>
         </div>
       </footer>
     </div>
