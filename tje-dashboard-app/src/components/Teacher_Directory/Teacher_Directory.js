@@ -29,7 +29,6 @@ function TEACHER_DIRECTORY() {
     };
 
     getTeacherList();
-
   }, [teacherAdded]);
 
   async function addNewTeacher(newName) {
@@ -73,6 +72,9 @@ function TEACHER_DIRECTORY() {
         >
           Add New Teacher
         </Button>
+        <div>
+          <h2>Edit Teacher Name</h2>
+        </div>
       </footer>
     </div>
   );
