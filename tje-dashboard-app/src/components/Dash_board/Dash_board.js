@@ -11,6 +11,8 @@ function DASH_BOARD() {
   const [newTeacherName, setNewTeacherName] = useState("");
   const classCollectionRef = collection(db, "Classes");
 
+  
+
 
   useEffect(() => {
     getClassList();
@@ -37,7 +39,13 @@ function DASH_BOARD() {
       const teacherSnapshot = await getDocs(teacherQuery);
 
       let teacherRef;
+      if (newTeacherName == "" || newClassName == "") {
+        
+        console.log("input teacher/class name");
 
+      
+      }
+      else {
       if (teacherSnapshot.empty) {
         teacherRef = await addDoc(teacherCollectionRef, {name: newTeacherName});
       } else {
@@ -45,9 +53,11 @@ function DASH_BOARD() {
       }
 
       await addDoc(classCollectionRef, {name: newClassName, teacher: teacherRef});
+    
       setNewClassName("");
       setNewTeacherName("");
       getClassList();
+    }
     }catch (err){
       console.log(err);
     }
@@ -79,14 +89,14 @@ function DASH_BOARD() {
         value={newClassName}
         onChange={(e) => setNewClassName(e.target.value)}
         placeholder="Enter new class name"
-      />
+      /> {" "}
       <TextField
         value={newTeacherName}
         onChange={(e) => setNewTeacherName(e.target.value)}
         placeholder="Enter teacher's name"
       />
 
-      <Button onClick={handleAddClass} variant="outlined" style = {{marginLeft:'10px'}}>Add Class</Button>
+      <Button onClick={handleAddClass} variant="outlined" style = {{marginLeft:'10px', marginTop: '8px'}}>Add Class</Button>
 
       <br></br>
       <br></br>
@@ -94,7 +104,7 @@ function DASH_BOARD() {
       <div>
         {classList.map((target) => {
             return (
-              <div key={target.id} style={{ marginBottom:'10px'}}>
+              <div key={target.id} style={{ marginRight:'100px',marginBottom:'10px'}}>
                 <Link
                   to={
                     "/teacher_dashboard/" +
@@ -104,9 +114,9 @@ function DASH_BOARD() {
                   }
                   style = {{textDecoration: 'none'}}
                 >
-                  <Button variant = "outline">{target.name}</Button>
+                  <Button variant = "outline" style = {{display: 'flex',margin: 'auto',marginTop: '8px'}}>{target.name}</Button>
                 </Link>
-                <Button onClick={() => handleDeleteClass(target.id)} variant="outlined">Delete</Button>
+                <Button onClick={() => handleDeleteClass(target.id)} variant="outlined" style = {{marginLeft: '200px',marginTop: '-57px'}}>Delete</Button>
               </div>
             );
         })}
