@@ -18,11 +18,10 @@ async function addNewStudent(studentName, studentAge, sClass, allClass) {
   
   let classInfo = [];
   for (let i=0; i<sClass.length; i++){
-    // const classCollectionRef = collection(db, "Classes");
-    // const classQuery = query(classCollectionRef, where(GetClassId(allClass, sClass[i])));
-    // const classSnapshot = await getDocs(classQuery);
-    // let classRef = doc(db, "Classes", classSnapshot);
-    let classRef = "unresolved"; 
+    const classCollectionRef = collection(db, "Classes");
+    const classQuery = query(classCollectionRef, where("name", "==", GetClass(allClass, GetClassId(allClass, sClass[i]))));
+    const classSnapshot = await getDocs(classQuery);
+    let classRef = doc(db, "Classes", classSnapshot.docs[0].id);
     classInfo.push({class: classRef, grade: -1})
   }
 
@@ -58,6 +57,7 @@ function GetClassId(classes, className) {
 
 
 }
+
 
 
 
