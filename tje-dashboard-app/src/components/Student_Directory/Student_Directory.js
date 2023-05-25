@@ -8,7 +8,12 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { TextField } from '@mui/material';
 import Button from "@mui/material/Button";
-
+import { Theme, useTheme } from '@mui/material/styles';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 
 async function addNewStudent(studentName, studentAge) {
@@ -75,7 +80,7 @@ function Student_Directory() {
       }
     };
     getStudentList();
-  }, []);
+  }, [studentAdded]);
 
   return (
     <div style={{ textAlign: "center" }}>
@@ -113,6 +118,7 @@ function Student_Directory() {
           variant="outlined"
         />
         
+
       </header>
       <div>
         <br></br>
