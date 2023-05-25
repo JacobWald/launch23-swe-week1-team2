@@ -1,27 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { db } from './../../firebase.js';
-import { collection, getDocs, addDoc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, query, where, doc } from 'firebase/firestore';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { TextField } from '@mui/material';
 import Button from "@mui/material/Button";
-import { Theme, useTheme } from '@mui/material/styles';
-import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from '@mui/material/Select';
+import { ref } from "firebase/database";
 
+async function addNewStudent(studentName, studentAge, sClass, allClass) {
+  
+  let classInfo = [];
+  for (let i=0; i<sClass.length; i++){
+    // const classCollectionRef = collection(db, "Classes");
+    // const classQuery = query(classCollectionRef, where(GetClassId(allClass, sClass[i])));
+    // const classSnapshot = await getDocs(classQuery);
+    // let classRef = doc(db, "Classes", classSnapshot);
+    let classRef = "unresolved"; 
+    classInfo.push({class: classRef, grade: -1})
+  }
 
-async function addNewStudent(studentName, studentAge) {
+  
+
   const docRef = await addDoc(collection(db, "Students"), {
     name: studentName,
-    age: studentAge
-    // must add the class and the grade also 
-    // Maybe make class a dropdown menu attached to the class id
+    age: studentAge,
+    classesTaken: classInfo
   });
 }
 
@@ -37,6 +47,20 @@ function GetClass (classes, id) {
   return className;
 
 }
+
+function GetClassId(classes, className) {
+  let classId = "";
+  classes.filter(cla => cla.name  === className).map(filteredId => (
+    //classRef = "Classes/" + filteredId.id
+    classId = filteredId.id
+  ));
+  return classId;
+
+
+}
+
+
+
 function Student_Directory() {
   const studentColRef = collection(db, "Students");
   const classRef = collection(db, "Classes");
@@ -46,6 +70,17 @@ function Student_Directory() {
   const [studentAge, setStudentAge] = useState(0);
   const [studentAdded, setStudentAdded] = useState(false);
   const [studentClass, setStudentClass] = useState([]);
+
+  // Handle multiple select
+  const handleChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setStudentClass(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value,
+    );
+  };
 
   useEffect(() => {
     const getClassList = async () => {
@@ -91,11 +126,11 @@ function Student_Directory() {
       <Button
           variant="outlined"
           onClick={() => {
-            addNewStudent(studentName, studentAge);
+            addNewStudent(studentName, studentAge, studentClass, classList);
             setStudentAdded(!studentAdded);
           }}
         >
-          Add New Student: 
+          Add New Student 
         </Button>
         <br></br>
         <br></br>
@@ -111,12 +146,30 @@ function Student_Directory() {
           label="Student age"
           variant="outlined"
         />
-        <TextField
-          value={studentClass}
-          onChange={(e) => setStudentClass(e.target.value)}
-          label="Class"
-          variant="outlined"
-        />
+        <Box
+            >
+              <FormControl size = 'medium' >
+                <InputLabel id="demo-simple-select-label">
+                  Classes
+                </InputLabel>
+                <Select
+                  labelId="demo-multiple-select-label"
+                  id="demo-multiple-select"
+                  multiple
+                  value={studentClass}
+                  label="Classes"
+                  onChange={handleChange}
+                >
+
+                  {classList.map((oneClass) => (
+                    <MenuItem key={oneClass.id} value={oneClass.name}>
+                      {" "}
+                      {oneClass.name}{" "}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
         
 
       </header>
